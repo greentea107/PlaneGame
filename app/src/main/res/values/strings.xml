@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PlaneGame</string>
+    <string name="readme">本游戏旨在学习和交流。游戏演示用了在Kotlin语言环境下的多线程编程操作。
+        游戏中所涉及的素材皆来自网络，源代码已经打包到网盘以供下载和研究。</string>
+    <string name="contact">联系方式：\n
+        QQ：52137124\n
+        Email:52137124@qq.com</string>
+    <string name="code_down">源代码下载: \n https://474b.com/file/22686471-423303135
+</string>
+    <string name="qq_link">点击加入QQ群聊 \n https://jq.qq.com/?_wv=1027&amp;k=5W9TX5j</string>
+    <string name="jian_shu">我的简书号 \n https://www.jianshu.com/u/ed61628e1e18</string>
+</resources>
