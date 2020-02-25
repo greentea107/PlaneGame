@@ -18,31 +18,33 @@ class BackgroundMap(context: Context) {
     init {
         val inputStream = context.assets.open("map.jpg")
         bmpMap = BitmapFactory.decodeStream(inputStream)
-        offy = bmpMap.height
     }
 
-    fun draw(canvas: Canvas?, width: Int, height: Int) {
+    fun draw(canvas: Canvas?, surfaceWidth: Int, surfaceHeight: Int) {
         if (canvas == null) return
         if (srcHeight == 0) {
-            srcHeight = bmpMap.width * height / width
+            // 按Surface的高度转换成和原图等比例的高度
+            srcHeight = bmpMap.width * surfaceHeight / surfaceWidth
             offy = bmpMap.height - srcHeight
         }
-        if ((dstRect.right - dstRect.left) == 0)
-            dstRect = Rect(0, 0, width, height)
-
+        // 原画中要显示的局部区域
         val srcRect = Rect(0, 0 + offy, bmpMap.width, srcHeight + offy)
+        // 将原画的局部区域充满Surface的区域
+        if (dstRect.isEmpty)
+            dstRect = Rect(0, 0, surfaceWidth, surfaceHeight)
         canvas.drawBitmap(bmpMap, srcRect, dstRect, null)
 
-        offy -= 1
+        offy -= 1 // 原画的偏移
+
+        // 当原画显示到顶部时拼接原画的尾部
         if (offy < 0) {
             val srcRect2 = Rect(0, bmpMap.height - (offy * -1), bmpMap.width, bmpMap.height)
-            val dstRect2 = Rect(0, 0, width, width * srcRect2.height() / srcRect2.width())
+            val dstRect2 = Rect(0, 0, surfaceWidth, surfaceWidth * srcRect2.height() / srcRect2.width())
             canvas.drawBitmap(bmpMap, srcRect2, dstRect2, null)
 
             if (offy <= -srcHeight)
                 offy = bmpMap.height - srcHeight
         }
-
     }
 
     fun relase() {
