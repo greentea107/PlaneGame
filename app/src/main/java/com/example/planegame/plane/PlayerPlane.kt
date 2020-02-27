@@ -18,8 +18,8 @@ class PlayerPlane private constructor() : Plane() {
     private var isTop = false
     private var isBottom = false
     private var isAttack = false
-    private var startMillis = 0L
     private var isEntrance = false
+    private var startMillis = 0L
 
     private object Holder {
         val instance = PlayerPlane()
@@ -184,7 +184,9 @@ class PlayerPlane private constructor() : Plane() {
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        if (isSafe()) drawSafeOval(canvas)
+        if (isSafe()) { // 飞机处于无敌时间内就
+            drawSafeOval(canvas)
+        }
     }
 
     private val paintOval = Paint()
