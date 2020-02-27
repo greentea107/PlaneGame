@@ -55,7 +55,7 @@ class PlayerPlane private constructor() : Plane() {
     }
 
     private fun init() {
-        setPlaneImage("mine.png")
+        setPlaneImage("mine.png") // 加载玩家飞机的位图
         executors = Executors.newFixedThreadPool(2)
         // 飞行运行协程
         executors.submit {
