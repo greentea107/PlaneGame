@@ -10,7 +10,7 @@ import android.util.LruCache
  * 位图缓存
  */
 object BitmapCache {
-    private const val scale = 1080 / 720
+    private const val SCALE = 1080 / 720
     private val mapCache = LruCache<String, Bitmap>(32)
 
     fun loadBitmap(imgUrl: String): Bitmap {
@@ -20,7 +20,7 @@ object BitmapCache {
             val bmp = BitmapFactory.decodeStream(MyApp.context.assets.open(imgUrl))
             // 对位图按比例缩放
             val bmpTemp = Bitmap.createBitmap(
-                bmp.width * scale, bmp.height * scale,
+                bmp.width * SCALE, bmp.height * SCALE,
                 Bitmap.Config.ARGB_8888
             )
             val canvas = Canvas(bmpTemp)
