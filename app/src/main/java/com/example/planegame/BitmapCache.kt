@@ -10,7 +10,7 @@ import android.util.LruCache
  * 位图缓存
  */
 object BitmapCache {
-    private val scale = 1080 / 720
+    private const val scale = 1080 / 720
     private val mapCache = LruCache<String, Bitmap>(32)
 
     fun loadBitmap(imgUrl: String): Bitmap {

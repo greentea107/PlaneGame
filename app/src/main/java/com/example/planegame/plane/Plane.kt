@@ -10,7 +10,7 @@ open class Plane {
     var y = 0f
     protected var speed = 1f // 飞机移动的速度
     var hp = 1 // 飞机血量
-    private var isEnableOut = false // 是否允许飞出边界
+    private var isEnableOut = false // 是否允许飞出屏幕边界
     private lateinit var bmpPlane: Bitmap
 
     /**
