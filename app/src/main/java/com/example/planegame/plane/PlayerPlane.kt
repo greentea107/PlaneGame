@@ -61,7 +61,7 @@ class PlayerPlane private constructor() : Plane() {
         executors.submit {
             while (AppHelper.isRunning) {
                 if (AppHelper.isPause) continue
-                if (isEntrance) {
+                if (isEntrance) { // 玩家飞机是否处于入场阶段
                     entrance()
                 } else {
                     if (isRight) moveRight()
