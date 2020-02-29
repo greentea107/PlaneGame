@@ -2,7 +2,7 @@ package com.example.planegame.plane
 
 import android.graphics.Rect
 
-open class EnemyPlane : Plane() {
+class EnemyPlane : Plane() {
     var flagUsed = false // 占用标记，飞出屏幕后设为false，对象可被重复使用
     var direction = "down" // 敌机的飞行方向
     var score = 1 // 敌机的分数
@@ -10,10 +10,18 @@ open class EnemyPlane : Plane() {
     var type = 1
 
     init {
-        setPlaneImage("ep1.png")
         setEnableOut(true) // 敌机可以飞机屏幕边界再消失
     }
 
+    /**
+     * 飞机的构造方法
+     * @param imgUrl：飞机图片
+     * @param speed：速度
+     * @param score：分数
+     * @param hp：血量
+     * @param direction：飞机的飞行方向
+     * @param isTrack：是否会根据玩家飞机的位置做偏移飞行
+     */
     fun buildPlane(
         imgUrl: String,
         speed: Float,
