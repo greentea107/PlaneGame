@@ -149,6 +149,7 @@ class EnemyPlaneManager private constructor() {
                 eRect.centerY().toFloat(),
                 ep.getPlaneImage().width / 2.toFloat()
             )
+            // 通过消息总线发给主界面更新计分控件
             LiveEventBus.get(AppHelper.COLLI_EVENT, Int::class.java).post(1)
         }
     }
