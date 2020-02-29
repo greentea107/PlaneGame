@@ -8,7 +8,6 @@ import com.example.planegame.MathUtils
 import com.example.planegame.bomb.BombManager
 import com.example.planegame.bullet.BulletManager
 import com.jeremyliao.liveeventbus.LiveEventBus
-import java.lang.Exception
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -26,8 +25,8 @@ class EnemyPlaneManager private constructor() {
             while (AppHelper.isRunning) {
                 if (AppHelper.isPause) continue
                 buildEnemyPlane() // 生成敌机
-                motionLoop() // 对敌机列表遍历，作运动处理
-                bulletLoop()
+                motionPlane() // 对敌机列表遍历，作运动处理
+                sendBullet() // 让指定的飞机发射子弹
                 Thread.sleep(Holder.DELAY) // 这个延时能决定飞机的移动的快慢
             }
         }
@@ -94,7 +93,7 @@ class EnemyPlaneManager private constructor() {
     }
 
     private var lastMillis = 0L
-    private fun bulletLoop() {
+    private fun sendBullet() {
         enemyList.filter { it.flagUsed && it.type in (6 until 10) }
             .forEach {
                 if ((System.currentTimeMillis() - lastMillis) > 1000) {
@@ -113,7 +112,7 @@ class EnemyPlaneManager private constructor() {
     /**
      * 飞行的运动循环
      */
-    private fun motionLoop() {
+    private fun motionPlane() {
         enemyList.filter { it.flagUsed }.forEach {
             if (it.isTrack) {
                 val offset = it.getPlaneSpeed() / 2
