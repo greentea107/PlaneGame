@@ -17,7 +17,6 @@ public class MyApp extends Application {
 
     private void initLiveEvent() {
         LiveEventBus.config()
-                .supportBroadcast(this)
                 .lifecycleObserverAlwaysActive(false);
     }
 }

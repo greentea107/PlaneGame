@@ -114,7 +114,7 @@ class PlayerPlane private constructor() : Plane() {
         if (isEntrance) {
             val beginY = AppHelper.heightSurface - (AppHelper.heightSurface / 3)
             val endY = AppHelper.heightSurface
-            if (y in (beginY..endY)) {
+            if (y.toInt() in (beginY..endY)) {
                 moveTop()
             } else {
                 isEntrance = false
