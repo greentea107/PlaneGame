@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                                 // 绘制敌方飞机
                                 EnemyPlaneManager.getInst().draw(canvas)
                                 // 绘制爆炸
-//                                BombManager.getInst().drawAll(canvas)
+                                BombManager.getInst().drawAll(canvas)
                             }
                             canvas?.let { holder.unlockCanvasAndPost(it) }
                         }
@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             AppHelper.isPause = !AppHelper.isPause
             vgInfomation.visibility = if (AppHelper.isPause) View.VISIBLE else View.GONE
         }
-        btnCodeDown.setOnClickListener { openBrowser(btnCodeDown.text.toString().split("\n")[1]) }
+//        btnCodeDown.setOnClickListener { openBrowser(btnCodeDown.text.toString().split("\n")[1]) }
         btnJianShu.setOnClickListener { openBrowser(btnJianShu.text.toString().split("\n")[1]) }
         btnQQ.setOnClickListener { openBrowser(btnQQ.text.toString().split("\n")[1]) }
     }

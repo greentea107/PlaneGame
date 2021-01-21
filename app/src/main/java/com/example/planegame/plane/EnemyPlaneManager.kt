@@ -68,16 +68,16 @@ class EnemyPlaneManager private constructor() {
             it.flagUsed = true
             when (enemyType) {
                 0 -> it.buildPlane("ep0.png", 1.0f, 1)
-//                1 -> it.buildPlane("ep1.png", 1.1f, 1)
-//                2 -> it.buildPlane("ep2.png", 1.5f, 1, isTrack = true)
-//                3 -> it.buildPlane("ep3.png", 1.2f, 2, isTrack = true)
-//                4 -> it.buildPlane("ep4.png", 0.8f, 2)
-//                5 -> it.buildPlane("ep5.png", 0.8f, 1, 3)
-//                6 -> it.buildPlane("ep6.png", 0.3f, 5, 20, "up")
-//                7 -> it.buildPlane("ep7.png", 0.4f, 4, 10)
-//                8 -> it.buildPlane("ep8.png", 0.2f, 5, 12, "up")
-//                9 -> it.buildPlane("ep9.png", 0.35f, 8, 20)
-//                10 -> it.buildPlane("ep10.png", 0.37f, 9, 20)
+                1 -> it.buildPlane("ep1.png", 1.1f, 1)
+                2 -> it.buildPlane("ep2.png", 1.5f, 1, isTrack = true)
+                3 -> it.buildPlane("ep3.png", 1.2f, 2, isTrack = true)
+                4 -> it.buildPlane("ep4.png", 0.8f, 2)
+                5 -> it.buildPlane("ep5.png", 0.8f, 1, 3)
+                6 -> it.buildPlane("ep6.png", 0.3f, 5, 20, "up")
+                7 -> it.buildPlane("ep7.png", 0.4f, 4, 10)
+                8 -> it.buildPlane("ep8.png", 0.2f, 5, 12, "up")
+                9 -> it.buildPlane("ep9.png", 0.35f, 8, 20)
+                10 -> it.buildPlane("ep10.png", 0.37f, 9, 20)
             }
             it.type = enemyType
             // 随机设置敌机的起始位置
