@@ -68,17 +68,6 @@
                 android:background="@android:color/darker_gray" />
 
             <Button
-                android:id="@+id/btnCodeDown"
-                style="@style/btn_info"
-                android:text="@string/code_down" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="10dp"
-                android:background="@android:color/darker_gray" />
-
-            <Button
                 android:id="@+id/btnJianShu"
                 style="@style/btn_info"
                 android:text="@string/jian_shu" />

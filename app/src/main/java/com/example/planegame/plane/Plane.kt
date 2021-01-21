@@ -1,6 +1,7 @@
 package com.example.planegame.plane
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import com.example.planegame.AppHelper
 import com.example.planegame.BitmapCache
@@ -11,7 +12,7 @@ open class Plane {
     protected var speed = 1f // 飞机移动的速度
     var hp = 1 // 飞机血量
     private var isEnableOut = false // 是否允许飞出屏幕边界
-    private lateinit var bmpPlane: Bitmap
+    private var bmpPlane: Bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8)
 
     /**
      * 根据文件名加载飞机的位图，加载后的位图会放在map集合中缓存起来，以便下回取出

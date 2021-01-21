@@ -1,13 +1,12 @@
 package com.example.planegame.plane
 
-import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.Rect
+import android.graphics.*
 import com.example.planegame.AppHelper
 import com.example.planegame.MathUtils
 import com.example.planegame.bomb.BombManager
 import com.example.planegame.bullet.BulletManager
 import com.jeremyliao.liveeventbus.LiveEventBus
+import java.lang.Exception
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -62,23 +61,23 @@ class EnemyPlaneManager private constructor() {
         }
         // 随机生成敌机类型
         var enemyType = Random().nextInt(11)
-        // 控制大号机的数
+        // 控制生成大飞机的总数
         val count = enemyList.count { it.type in (6..10) && it.flagUsed }
         if (count >= 5) enemyType -= 5
         plane?.let {
             it.flagUsed = true
             when (enemyType) {
                 0 -> it.buildPlane("ep0.png", 1.0f, 1)
-                1 -> it.buildPlane("ep1.png", 1.1f, 1)
-                2 -> it.buildPlane("ep2.png", 1.5f, 1, isTrack = true)
-                3 -> it.buildPlane("ep3.png", 1.2f, 2, isTrack = true)
-                4 -> it.buildPlane("ep4.png", 0.8f, 2)
-                5 -> it.buildPlane("ep5.png", 0.8f, 1, 3)
-                6 -> it.buildPlane("ep6.png", 0.3f, 5, 20, "up")
-                7 -> it.buildPlane("ep7.png", 0.4f, 4, 10)
-                8 -> it.buildPlane("ep8.png", 0.2f, 5, 12, "up")
-                9 -> it.buildPlane("ep9.png", 0.35f, 8, 20)
-                10 -> it.buildPlane("ep10.png", 0.37f, 9, 20)
+//                1 -> it.buildPlane("ep1.png", 1.1f, 1)
+//                2 -> it.buildPlane("ep2.png", 1.5f, 1, isTrack = true)
+//                3 -> it.buildPlane("ep3.png", 1.2f, 2, isTrack = true)
+//                4 -> it.buildPlane("ep4.png", 0.8f, 2)
+//                5 -> it.buildPlane("ep5.png", 0.8f, 1, 3)
+//                6 -> it.buildPlane("ep6.png", 0.3f, 5, 20, "up")
+//                7 -> it.buildPlane("ep7.png", 0.4f, 4, 10)
+//                8 -> it.buildPlane("ep8.png", 0.2f, 5, 12, "up")
+//                9 -> it.buildPlane("ep9.png", 0.35f, 8, 20)
+//                10 -> it.buildPlane("ep10.png", 0.37f, 9, 20)
             }
             it.type = enemyType
             // 随机设置敌机的起始位置
@@ -155,9 +154,8 @@ class EnemyPlaneManager private constructor() {
     }
 
     fun draw(canvas: Canvas?) {
-        if (canvas == null) return
         enemyList.filter { it.flagUsed }.forEach {
-            canvas.drawBitmap(it.getPlaneImage(), it.x, it.y, null)
+            canvas?.drawBitmap(it.getPlaneImage(), it.x, it.y, null)
         }
     }
 

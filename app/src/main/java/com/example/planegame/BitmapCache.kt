@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.LruCache
+import androidx.annotation.NonNull
 
 /**
  * 位图缓存
@@ -13,7 +14,7 @@ object BitmapCache {
     private const val SCALE = 1080 / 720
     private val mapCache = LruCache<String, Bitmap>(32)
 
-    fun loadBitmap(imgUrl: String): Bitmap {
+    fun loadBitmap(@NonNull imgUrl: String): Bitmap {
         // 如果位图没有缓存过的话，加载位图并缩放大小到合适的比例
         return if (mapCache[imgUrl] == null) {
             // 加载位图
