@@ -6,8 +6,12 @@
         <attr name="padBackgroundColor" format="reference|color" />
         <attr name="padBackground" format="reference|color" />
         <attr name="padLightColor" format="reference|color" />
+        <attr name="arrowLight" format="reference|color" />
+        <attr name="arrowDark" format="reference|color" />
         <attr name="showPartitionLine" format="reference|boolean" />
         <attr name="showHotSport" format="reference|boolean" />
+        <attr name="showAxisArrow" format="reference|boolean" />
+        <attr name="showAngleArrow" format="reference|boolean" />
     </declare-styleable>
 
 </resources>

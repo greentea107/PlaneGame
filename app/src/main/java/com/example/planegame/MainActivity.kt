@@ -269,20 +269,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             MotionEvent.ACTION_POINTER_DOWN -> {
                 if (part != lastPart) playerPlane.releaseAction()
                 when (part) {
-                    4, 5 -> playerPlane.actionRight()
-                    12, 13 -> playerPlane.actionLeft()
-                    16, 1 -> playerPlane.actionTop()
-                    8, 9 -> playerPlane.actionBottom()
-                    2, 3 -> {
+                    3, 4 -> playerPlane.actionRight()
+                    11, 12 -> playerPlane.actionLeft()
+                    15, 0 -> playerPlane.actionTop()
+                    7, 8 -> playerPlane.actionBottom()
+                    1, 2 -> {
                         playerPlane.actionTop();playerPlane.actionRight()
                     }
-                    6, 7 -> {
+                    5, 6 -> {
                         playerPlane.actionBottom();playerPlane.actionRight()
                     }
-                    10, 11 -> {
+                    9, 10 -> {
                         playerPlane.actionBottom();playerPlane.actionLeft()
                     }
-                    14, 15 -> {
+                    13, 14 -> {
                         playerPlane.actionTop();playerPlane.actionLeft()
                     }
                 }

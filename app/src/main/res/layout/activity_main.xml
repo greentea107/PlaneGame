@@ -83,8 +83,11 @@
                 android:id="@+id/gamePad"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="bottom|left"
+                app:arrowLight="@android:color/white"
                 app:padBackground="@mipmap/keyboard_select_key_direction_bk"
-                android:layout_gravity="bottom|left"/>
+                app:showAxisArrow="true"
+                app:showHotSport="false" />
         </FrameLayout>
     </LinearLayout>
 
@@ -97,7 +100,8 @@
             android:id="@+id/surfaceView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        <include layout="@layout/layout_info"/>
+
+        <include layout="@layout/layout_info" />
     </FrameLayout>
 
     <LinearLayout

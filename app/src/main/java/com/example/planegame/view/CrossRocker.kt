@@ -3,14 +3,13 @@ package com.example.planegame.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.withRotation
 import com.example.planegame.R
 import kotlin.math.cos
 import kotlin.math.sin
-
 
 /**
  * 自定义圆形方向盘控件，此控件主要处理上下左右的事件
@@ -49,11 +48,14 @@ class CrossRocker : View {
 
     private var isShowPartitionLine = false // 是否显示分区线
     private var isShowHotsport = true // 是否显示点击热点
-
+    private var isShowAxisArrow = false // 是否显示上下左右方向的箭头
+    private var isShowAngleArrow = false // 是否显示夹角方向的箭头
     private var resPadBackground = -1
     private var colorBackground = Color.TRANSPARENT
     private var colorPadLine = Color.WHITE
     private var colorHotspot = Color.CYAN
+    private var colorArrowDark = Color.GRAY
+    private var colorArrowLight = Color.WHITE
     fun setPartitionEventListener(listener: PartitionEventListener?) {
         partListener = listener
     }
@@ -74,10 +76,16 @@ class CrossRocker : View {
                     it.getResourceId(R.styleable.CrossRocker_padBackground, resPadBackground)
                 colorBackground =
                     it.getColor(R.styleable.CrossRocker_padBackgroundColor, colorBackground)
+                colorArrowDark = it.getColor(R.styleable.CrossRocker_arrowDark, colorArrowDark)
+                colorArrowLight = it.getColor(R.styleable.CrossRocker_arrowLight, colorArrowLight)
                 colorHotspot = it.getColor(R.styleable.CrossRocker_padHotSportColor, colorHotspot)
                 isShowHotsport = it.getBoolean(R.styleable.CrossRocker_showHotSport, isShowHotsport)
                 isShowPartitionLine =
                     it.getBoolean(R.styleable.CrossRocker_showPartitionLine, isShowPartitionLine)
+                isShowAxisArrow =
+                    it.getBoolean(R.styleable.CrossRocker_showAxisArrow, isShowAxisArrow)
+                isShowAngleArrow =
+                    it.getBoolean(R.styleable.CrossRocker_showAngleArrow, isShowAngleArrow)
             }
         }
         setPartition()
@@ -89,10 +97,6 @@ class CrossRocker : View {
 
     fun setShowPartitionLine(show: Boolean) {
         isShowPartitionLine = show
-    }
-
-    fun setBacgroundColor(color: Int) {
-        colorBackground = color
     }
 
     fun setColorPadLine(color: Int) {
@@ -111,7 +115,6 @@ class CrossRocker : View {
         val deg = 2 * Math.PI / PARTITION
         val cos = cos(-deg)
         val sin = sin(-deg)
-        // rotation clockwise (unit is negative)
         vectorX[PARTITION] = 0.0
         vectorX[0] = vectorX[PARTITION]
         vectorY[PARTITION] = currRadius
@@ -130,20 +133,15 @@ class CrossRocker : View {
      * 判断坐标在方向分区
      */
     private fun getPartition(x: Float, y: Float): Int {
-        var left: Int
-        var mid: Int
-        var right: Int
         if (x <= -1.0f && y <= -1.0f) return -1
-        // binary search for the area
-        var vx = (x - centerX).toDouble()
+        val vx = (x - centerX).toDouble()
         var vy = (y - centerY).toDouble()
-        vy = -1.0 * vy
-        // click on center?
+        vy *= -1.0
         if (vx * vx + vy * vy < CENTER_PART_SIZE_RATIO * CENTER_PART_SIZE_RATIO * currRadius * currRadius / 4) return 0
-        left = 0
-        right = PARTITION
+        var left = 0
+        var right = PARTITION
         while (right - left > 1) {
-            mid = (left + right) / 2
+            val mid = (left + right) / 2
             if (cross(vectorX[left], vectorY[left], vx, vy) <= 0
                 && cross(vectorX[mid], vectorY[mid], vx, vy) >= 0
             ) {
@@ -155,7 +153,7 @@ class CrossRocker : View {
         return left
     }
 
-    fun onTouch(evt: MotionEvent): Boolean {
+    private fun onTouch(evt: MotionEvent): Boolean {
         val action = evt.actionMasked
         val x = evt.x
         val y = evt.y
@@ -203,6 +201,18 @@ class CrossRocker : View {
         if (isShowPartitionLine) {
             drawPartitionLine(canvas)
         }
+        if (isShowAxisArrow) {
+            drawArrow(canvas, radius, intArrayOf(15, 0), 0f)
+            drawArrow(canvas, radius, intArrayOf(3, 4), 90f)
+            drawArrow(canvas, radius, intArrayOf(7, 8), 180f)
+            drawArrow(canvas, radius, intArrayOf(11, 12), 270f)
+        }
+        if (isShowAngleArrow) {
+            drawArrow(canvas, radius, intArrayOf(1, 2), 45f)
+            drawArrow(canvas, radius, intArrayOf(5, 6), 135f)
+            drawArrow(canvas, radius, intArrayOf(9, 10), 225f)
+            drawArrow(canvas, radius, intArrayOf(13, 14), 315f)
+        }
         // 绘制按下时的热点
         if (touched && isShowHotsport) {
             paint.color = colorHotspot
@@ -220,6 +230,38 @@ class CrossRocker : View {
             paint.color = colorBackground
             canvas.drawCircle(centerX, centerY, radius.toFloat(), paint)
         }
+    }
+
+    /**
+     * 绘制箭头
+     * @param radius 圆盘半径
+     * @param part   需要响应的分区
+     * @param degree 绘制的箭头指向的角度
+     */
+    private fun drawArrow(canvas: Canvas, radius: Double, part: IntArray, degree: Float) {
+        val tempMask = paint.maskFilter
+        if (touched && lastPartition in part) {
+            paint.color = colorArrowLight
+            paint.style = Paint.Style.FILL
+            paint.maskFilter = BlurMaskFilter(35f, BlurMaskFilter.Blur.SOLID)
+        } else {
+            paint.color = colorArrowDark
+            paint.style = Paint.Style.FILL
+        }
+        val offset = (radius / 10).toFloat()
+        val size = radius / 4
+        val path = Path()
+        path.moveTo(centerX, (centerY - radius + offset).toFloat())
+        path.lineTo(
+            (centerX + size / 2).toFloat(),
+            (centerY - radius + size + offset).toFloat()
+        )
+        path.lineTo((centerX - (size / 2)).toFloat(), (centerY - radius + size + offset).toFloat())
+        path.close()
+        canvas.withRotation(degree, centerX, centerY) {
+            this.drawPath(path, paint)
+        }
+        paint.maskFilter = tempMask
     }
 
     /**
