@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CrossRocker">
+        <attr name="padHotSportColor" format="reference|color" />
+        <attr name="padBackgroundColor" format="reference|color" />
+        <attr name="padBackground" format="reference|color" />
+        <attr name="padLightColor" format="reference|color" />
+        <attr name="showPartitionLine" format="reference|boolean" />
+        <attr name="showHotSport" format="reference|boolean" />
+    </declare-styleable>
+
+</resources>

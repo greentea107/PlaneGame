@@ -15,6 +15,7 @@ import com.example.planegame.bomb.BombManager
 import com.example.planegame.bullet.BulletManager
 import com.example.planegame.plane.EnemyPlaneManager
 import com.example.planegame.plane.PlayerPlane
+import com.example.planegame.view.CrossRocker
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_info.*
@@ -253,15 +254,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
      * 初始化游戏十字键
      */
     private fun initGamePad() {
-        gamePad.setPartition(16) // 十字键方向盘16等分
-        gamePad.setDrawPartitionAll(false) // 不显示方向盘等线
-        gamePad.setPartitionEventListener { _, action, part ->
-            onGamePadKey(action, part) // 响应方向盘操作
-        }
-        gamePad.setOnTouchListener { _, event ->
-            gamePad.onTouch(event)
-            true
-        }
+        gamePad.setPartitionEventListener(object : CrossRocker.PartitionEventListener {
+            override fun onPartitionEvent(v: View?, action: Int, part: Int) {
+                onGamePadKey(action, part) // 响应方向盘操作
+            }
+        })
     }
 
     private var lastPart = 0
@@ -302,7 +299,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
      * 调用第三方浏览器打开
      * @param url 要浏览的资源地址
      */
-    private fun openBrowser( url: String?) {
+    private fun openBrowser(url: String?) {
         val intent = Intent()
         intent.action = "android.intent.action.VIEW"
         val content_url = Uri.parse(url)

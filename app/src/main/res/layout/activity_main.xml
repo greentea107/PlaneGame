@@ -79,12 +79,12 @@
                 android:layout_height="match_parent"
                 android:src="@mipmap/keyboard_select_key_direction_bk" />
 
-            <com.example.planegame.view.Pad
+            <com.example.planegame.view.CrossRocker
                 android:id="@+id/gamePad"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom|left"
-                android:alpha="0.3" />
+                app:padBackground="@mipmap/keyboard_select_key_direction_bk"
+                android:layout_gravity="bottom|left"/>
         </FrameLayout>
     </LinearLayout>
 
