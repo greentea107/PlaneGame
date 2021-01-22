@@ -1,5 +1,6 @@
 package com.example.planegame
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
@@ -100,28 +101,24 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 width: Int,
                 height: Int
             ) {
-                try {
-                    launch(Dispatchers.IO) {
-                        while (AppHelper.isRunning) {
-                            val canvas = holder.lockCanvas()
-                            // 绘制背景
-                            map.draw(canvas, width, height)
-                            if (!AppHelper.isPause) {
-                                // 绘制子弹
-                                BulletManager.getInst().drawPlayerBullet(canvas)
-                                BulletManager.getInst().drawBossBullet(canvas)
-                                // 绘制我方飞机
-                                playerPlane.draw(canvas)
-                                // 绘制敌方飞机
-                                EnemyPlaneManager.getInst().draw(canvas)
-                                // 绘制爆炸
-                                BombManager.getInst().drawAll(canvas)
-                            }
-                            canvas?.let { holder.unlockCanvasAndPost(it) }
+                launch(Dispatchers.IO) {
+                    while (AppHelper.isRunning) {
+                        val canvas = holder.lockCanvas()
+                        // 绘制背景
+                        map.draw(canvas, width, height)
+                        if (!AppHelper.isPause) {
+                            // 绘制子弹
+                            BulletManager.getInst().drawPlayerBullet(canvas)
+                            BulletManager.getInst().drawBossBullet(canvas)
+                            // 绘制我方飞机
+                            playerPlane.draw(canvas)
+                            // 绘制敌方飞机
+                            EnemyPlaneManager.getInst().draw(canvas)
+                            // 绘制爆炸
+                            BombManager.getInst().drawAll(canvas)
                         }
+                        canvas?.let { holder.unlockCanvasAndPost(it) }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
 
@@ -146,7 +143,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 EnemyPlaneManager.init() // 初始化敌方飞机
                 BulletManager.init() // 初始化子弹数据
                 BombManager.init() // 初始化爆炸管理
-
             }
 
         })
@@ -158,11 +154,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             AppHelper.isPause = !AppHelper.isPause
             vgInfomation.visibility = if (AppHelper.isPause) View.VISIBLE else View.GONE
         }
-//        btnCodeDown.setOnClickListener { openBrowser(btnCodeDown.text.toString().split("\n")[1]) }
         btnJianShu.setOnClickListener { openBrowser(btnJianShu.text.toString().split("\n")[1]) }
         btnQQ.setOnClickListener { openBrowser(btnQQ.text.toString().split("\n")[1]) }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initAttackButton() {
         btnAttack.setOnTouchListener { v, event ->
             when (event.action) {
@@ -237,17 +233,19 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
      */
     private fun initScoreCount() {
         LiveEventBus.get(AppHelper.SCORE_EVENT, Int::class.java)
-            .observe(this, Observer {
+            .observe(this) {
                 val oldScore = tvScore.text.toString().toInt()
                 val df = DecimalFormat("00000")
                 val newScore = df.format(it + oldScore)
                 tvScore.text = newScore
-
+                println(">>>>>>>>>> ${tvScore.text}")
                 val oldCount = tvCount.text.toString().toInt()
                 val df2 = DecimalFormat("00000")
                 val newCount = df2.format(oldCount + 1)
                 tvCount.text = newCount
-            })
+            }
+        LiveEventBus.get(AppHelper.SCORE_EVENT, Int::class.java)
+            .post(999)
     }
 
     /**

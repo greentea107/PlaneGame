@@ -16,7 +16,9 @@ public class MyApp extends Application {
     }
 
     private void initLiveEvent() {
-        LiveEventBus.config()
+        LiveEventBus
+                .config()
+                .enableLogger(BuildConfig.DEBUG)
                 .lifecycleObserverAlwaysActive(false);
     }
 }
