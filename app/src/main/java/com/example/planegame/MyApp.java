@@ -12,7 +12,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        initLiveEvent();
+//        initLiveEvent();
     }
 
     private void initLiveEvent() {

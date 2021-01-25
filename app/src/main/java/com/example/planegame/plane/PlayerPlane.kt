@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
  * 玩家飞机
  */
 class PlayerPlane private constructor() : Plane() {
-    private lateinit var executors: ExecutorService
+    private val executors = Executors.newFixedThreadPool(2)
     private var isLeft = false
     private var isRight = false
     private var isTop = false
@@ -56,7 +56,6 @@ class PlayerPlane private constructor() : Plane() {
 
     private fun init() {
         setPlaneImage("mine.png") // 加载玩家飞机的位图
-        executors = Executors.newFixedThreadPool(2)
         // 飞行运行协程
         executors.submit {
             while (AppHelper.isRunning) {
@@ -190,6 +189,7 @@ class PlayerPlane private constructor() : Plane() {
     }
 
     private val paintOval = Paint()
+
     /**
      * 在飞机的外围画圆，表示飞机处于保护中
      */
