@@ -12,23 +12,21 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * 自定义圆形方向盘控件，此控件主要处理上下左右的事件
- * 方向盘以圆形中心等分16个区域，区域从0-15，
- * 上：0和15
- * 上右：1和2
- * 右：3和4
- * 右下：5和6
- * 下：7和8
- * 左下：9和10
- * 左：11和12
- * 左上：13和14
- * 点击方向盘时通过getPartition来判断触点属于哪个分区，以此为判断需要响应的方向键
- * 使用时需要实现PartitionEventListener接口，通过接口参数获取具体响应的分区号
+ * 游戏手柄的虚拟十字键，此控件主要处理上下左右的事件
  */
 class CrossRocker : View {
     companion object {
         private const val PARTITION = 16
         private const val CENTER_PART_SIZE_RATIO = 0.28f
+        const val TOP = "top"
+        const val BOTTOM = "bottom"
+        const val LEFT = "left"
+        const val RIGHT = "right"
+        const val TOP_LEFT = "top_left"
+        const val TOP_RIGHT = "top_right"
+        const val BOTTOM_LEFT = "bottom_left"
+        const val BOTTOM_RIGHT = "bottom_right"
+        const val NONE = "none"
     }
 
     private val paint = Paint()
@@ -44,10 +42,9 @@ class CrossRocker : View {
 
     private var vectorX = DoubleArray(PARTITION + 1)
     private var vectorY = DoubleArray(PARTITION + 1)
-    private var partListener: PartitionEventListener? = null
 
     private var isShowPartitionLine = false // 是否显示分区线
-    private var isShowHotsport = true // 是否显示点击热点
+    private var isShowHotsport = false // 是否显示点击热点
     private var isShowAxisArrow = false // 是否显示上下左右方向的箭头
     private var isShowAngleArrow = false // 是否显示夹角方向的箭头
     private var resPadBackground = -1
@@ -56,9 +53,7 @@ class CrossRocker : View {
     private var colorHotspot = Color.CYAN
     private var colorArrowDark = Color.GRAY
     private var colorArrowLight = Color.WHITE
-    fun setPartitionEventListener(listener: PartitionEventListener?) {
-        partListener = listener
-    }
+    private var onAction: ((View, String, Int) -> Unit)? = null
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         init(context, attrs)
@@ -153,6 +148,20 @@ class CrossRocker : View {
         return left
     }
 
+    private fun getDirection(partition: Int): String {
+        return when (partition) {
+            in intArrayOf(0, 15) -> "top"
+            in intArrayOf(1, 2) -> "top_right"
+            in intArrayOf(3, 4) -> "right"
+            in intArrayOf(5, 6) -> "bottom_right"
+            in intArrayOf(7, 8) -> "bottom"
+            in intArrayOf(9, 10) -> "bottom_left"
+            in intArrayOf(11, 12) -> "left"
+            in intArrayOf(13, 14) -> "top_left"
+            else -> "none"
+        }
+    }
+
     private fun onTouch(evt: MotionEvent): Boolean {
         val action = evt.actionMasked
         val x = evt.x
@@ -164,20 +173,20 @@ class CrossRocker : View {
                 touchedY = y
                 touched = true
                 this.postInvalidate()
-                partListener?.onPartitionEvent(this, action, lastPartition)
+                onAction?.let { it(this, getDirection(lastPartition), action) }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL -> {
                 touchedX = -1f
                 touchedY = -1f
                 touched = false
                 this.postInvalidate()
-                partListener?.onPartitionEvent(this, action, lastPartition)
+                onAction?.let { it(this, getDirection(lastPartition), action) }
             }
             MotionEvent.ACTION_MOVE -> {
                 touchedX = x
                 touchedY = y
                 this.postInvalidate()
-                partListener?.onPartitionEvent(this, action, lastPartition)
+                onAction?.let { it(this, getDirection(lastPartition), action) }
             }
         }
         return true
@@ -279,8 +288,8 @@ class CrossRocker : View {
         }
     }
 
-    interface PartitionEventListener {
-        fun onPartitionEvent(v: View?, action: Int, part: Int)
+    fun setActionListener(onAction: (v: View, direction: String, action: Int) -> Unit) {
+        this.onAction = onAction
     }
 
 }

@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.layout_info.*
 import kotlinx.coroutines.*
 import java.text.DecimalFormat
 
-
 /**
  * 本程序所涉及到的素材皆来自网络，仅供学习和演示使用。欢迎相互交流和学习
  * 简书原文：https://www.jianshu.com/p/7efa4b6eb2ab
@@ -252,39 +251,37 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
      * 初始化游戏十字键
      */
     private fun initGamePad() {
-        gamePad.setPartitionEventListener(object : CrossRocker.PartitionEventListener {
-            override fun onPartitionEvent(v: View?, action: Int, part: Int) {
-                onGamePadKey(action, part) // 响应方向盘操作
-            }
-        })
+        gamePad.setActionListener { _, direction, action ->
+            onGamePadKey(action, direction) // 响应方向盘操作
+        }
     }
 
-    private var lastPart = 0
-    private fun onGamePadKey(action: Int, part: Int) {
+    private var lastDirection = ""
+    private fun onGamePadKey(action: Int, direction: String) {
         when (action) {
             MotionEvent.ACTION_DOWN,
             MotionEvent.ACTION_MOVE,
             MotionEvent.ACTION_POINTER_DOWN -> {
-                if (part != lastPart) playerPlane.releaseAction()
-                when (part) {
-                    3, 4 -> playerPlane.actionRight()
-                    11, 12 -> playerPlane.actionLeft()
-                    15, 0 -> playerPlane.actionTop()
-                    7, 8 -> playerPlane.actionBottom()
-                    1, 2 -> {
+                if (direction != lastDirection) playerPlane.releaseAction()
+                when (direction) {
+                    CrossRocker.RIGHT -> playerPlane.actionRight()
+                    CrossRocker.LEFT -> playerPlane.actionLeft()
+                    CrossRocker.TOP -> playerPlane.actionTop()
+                    CrossRocker.BOTTOM -> playerPlane.actionBottom()
+                    CrossRocker.TOP_RIGHT -> {
                         playerPlane.actionTop();playerPlane.actionRight()
                     }
-                    5, 6 -> {
+                    CrossRocker.BOTTOM_RIGHT -> {
                         playerPlane.actionBottom();playerPlane.actionRight()
                     }
-                    9, 10 -> {
+                    CrossRocker.BOTTOM_LEFT -> {
                         playerPlane.actionBottom();playerPlane.actionLeft()
                     }
-                    13, 14 -> {
+                    CrossRocker.TOP_LEFT -> {
                         playerPlane.actionTop();playerPlane.actionLeft()
                     }
                 }
-                lastPart = part
+                lastDirection = direction
             }
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL -> {
