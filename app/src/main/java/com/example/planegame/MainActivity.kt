@@ -238,7 +238,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 val df = DecimalFormat("00000")
                 val newScore = df.format(it + oldScore)
                 tvScore.text = newScore
-                println(">>>>>>>>>> ${tvScore.text}")
                 val oldCount = tvCount.text.toString().toInt()
                 val df2 = DecimalFormat("00000")
                 val newCount = df2.format(oldCount + 1)
