@@ -39,12 +39,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        LiveEventBus.config().enableLogger(true)
-        LiveEventBus.get("test", Int::class.java)
-            .observe(this) {
-                println(">>>>>>>>>> $it")
-                Toast.makeText(this@MainActivity, "$it", Toast.LENGTH_SHORT).show()
-            }
         initView()
     }
 
@@ -56,7 +50,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onResume() {
         super.onResume()
         hideStatusBar()
-        LiveEventBus.get("test", Int::class.java).post(9999)
     }
 
     override fun onBackPressed() {
