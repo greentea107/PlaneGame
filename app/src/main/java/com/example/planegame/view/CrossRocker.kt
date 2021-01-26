@@ -26,13 +26,12 @@ class CrossRocker : View {
         const val TOP_RIGHT = "top_right"
         const val BOTTOM_LEFT = "bottom_left"
         const val BOTTOM_RIGHT = "bottom_right"
-        const val NONE = "none"
     }
 
     private val paint = Paint()
     private var currWidth = -1
     private var currHeight = -1
-    private var currRadius = -1.0
+    private var currRadius = -1.0f
     private var centerX = -1f
     private var centerY = -1f
     private var touched = false
@@ -40,8 +39,8 @@ class CrossRocker : View {
     private var touchedY = -1f
     private var lastPartition = -1
 
-    private var vectorX = DoubleArray(PARTITION + 1)
-    private var vectorY = DoubleArray(PARTITION + 1)
+    private var vectorX = FloatArray(PARTITION + 1)
+    private var vectorY = FloatArray(PARTITION + 1)
 
     private var isShowPartitionLine = false // 是否显示分区线
     private var isShowHotsport = false // 是否显示点击热点
@@ -53,7 +52,7 @@ class CrossRocker : View {
     private var colorHotspot = Color.CYAN
     private var colorArrowDark = Color.GRAY
     private var colorArrowLight = Color.WHITE
-    private var onAction: ((View, String, Int) -> Unit)? = null
+    private var onAction: ((View, String, MotionEvent) -> Unit)? = null
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         init(context, attrs)
@@ -110,17 +109,17 @@ class CrossRocker : View {
         val deg = 2 * Math.PI / PARTITION
         val cos = cos(-deg)
         val sin = sin(-deg)
-        vectorX[PARTITION] = 0.0
+        vectorX[PARTITION] = 0.0f
         vectorX[0] = vectorX[PARTITION]
         vectorY[PARTITION] = currRadius
         vectorY[0] = vectorY[PARTITION]
         for (i in 1 until PARTITION + 1) {
-            vectorX[i] = vectorX[i - 1] * cos - vectorY[i - 1] * sin
-            vectorY[i] = vectorX[i - 1] * sin + vectorY[i - 1] * cos
+            vectorX[i] = (vectorX[i - 1] * cos - vectorY[i - 1] * sin).toFloat()
+            vectorY[i] = (vectorX[i - 1] * sin + vectorY[i - 1] * cos).toFloat()
         }
     }
 
-    private fun cross(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+    private fun cross(x1: Float, y1: Float, x2: Float, y2: Float): Float {
         return x1 * y2 - x2 * y1
     }
 
@@ -129,9 +128,9 @@ class CrossRocker : View {
      */
     private fun getPartition(x: Float, y: Float): Int {
         if (x <= -1.0f && y <= -1.0f) return -1
-        val vx = (x - centerX).toDouble()
-        var vy = (y - centerY).toDouble()
-        vy *= -1.0
+        val vx = x - centerX
+        var vy = y - centerY
+        vy *= -1.0f
         if (vx * vx + vy * vy < CENTER_PART_SIZE_RATIO * CENTER_PART_SIZE_RATIO * currRadius * currRadius / 4) return 0
         var left = 0
         var right = PARTITION
@@ -158,7 +157,7 @@ class CrossRocker : View {
             in intArrayOf(9, 10) -> "bottom_left"
             in intArrayOf(11, 12) -> "left"
             in intArrayOf(13, 14) -> "top_left"
-            else -> "none"
+            else -> ""
         }
     }
 
@@ -173,20 +172,20 @@ class CrossRocker : View {
                 touchedY = y
                 touched = true
                 this.postInvalidate()
-                onAction?.let { it(this, getDirection(lastPartition), action) }
+                onAction?.let { it(this, getDirection(lastPartition), evt) }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_CANCEL -> {
                 touchedX = -1f
                 touchedY = -1f
                 touched = false
                 this.postInvalidate()
-                onAction?.let { it(this, getDirection(lastPartition), action) }
+                onAction?.let { it(this, getDirection(lastPartition), evt) }
             }
             MotionEvent.ACTION_MOVE -> {
                 touchedX = x
                 touchedY = y
                 this.postInvalidate()
-                onAction?.let { it(this, getDirection(lastPartition), action) }
+                onAction?.let { it(this, getDirection(lastPartition), evt) }
             }
         }
         return true
@@ -195,7 +194,7 @@ class CrossRocker : View {
     public override fun onDraw(canvas: Canvas) {
         val width = this.width
         val height = this.height
-        val radius = (if (width < height) width else height) / 2.0
+        val radius = (if (width < height) width else height) / 2.0f
         if (width != currWidth || height != currHeight) {
             centerX = (width / 2).toFloat()
             centerY = (height / 2).toFloat()
@@ -210,12 +209,14 @@ class CrossRocker : View {
         if (isShowPartitionLine) {
             drawPartitionLine(canvas)
         }
+        // 绘制正轴箭头
         if (isShowAxisArrow) {
             drawArrow(canvas, radius, intArrayOf(15, 0), 0f)
             drawArrow(canvas, radius, intArrayOf(3, 4), 90f)
             drawArrow(canvas, radius, intArrayOf(7, 8), 180f)
             drawArrow(canvas, radius, intArrayOf(11, 12), 270f)
         }
+        // 绘制夹角箭头
         if (isShowAngleArrow) {
             drawArrow(canvas, radius, intArrayOf(1, 2), 45f)
             drawArrow(canvas, radius, intArrayOf(5, 6), 135f)
@@ -230,14 +231,17 @@ class CrossRocker : View {
         }
     }
 
-    private fun drawBackground(canvas: Canvas, width: Int, height: Int, radius: Double) {
+    /**
+     * 绘制圆盘背景
+     */
+    private fun drawBackground(canvas: Canvas, width: Int, height: Int, radius: Float) {
         if (resPadBackground != -1) {
             val bmp = BitmapFactory.decodeResource(context.resources, resPadBackground)
             if (bmp != null)
                 canvas.drawBitmap(bmp, null, RectF(0f, 0f, width.toFloat(), height.toFloat()), null)
         } else {
             paint.color = colorBackground
-            canvas.drawCircle(centerX, centerY, radius.toFloat(), paint)
+            canvas.drawCircle(centerX, centerY, radius, paint)
         }
     }
 
@@ -247,7 +251,7 @@ class CrossRocker : View {
      * @param part   需要响应的分区
      * @param degree 绘制的箭头指向的角度
      */
-    private fun drawArrow(canvas: Canvas, radius: Double, part: IntArray, degree: Float) {
+    private fun drawArrow(canvas: Canvas, radius: Float, part: IntArray, degree: Float) {
         val tempMask = paint.maskFilter
         if (touched && lastPartition in part) {
             paint.color = colorArrowLight
@@ -257,15 +261,15 @@ class CrossRocker : View {
             paint.color = colorArrowDark
             paint.style = Paint.Style.FILL
         }
-        val offset = (radius / 10).toFloat()
+        val offset = radius / 10
         val size = radius / 4
         val path = Path()
-        path.moveTo(centerX, (centerY - radius + offset).toFloat())
+        path.moveTo(centerX, (centerY - radius + offset))
         path.lineTo(
-            (centerX + size / 2).toFloat(),
-            (centerY - radius + size + offset).toFloat()
+            centerX + size / 2,
+            centerY - radius + size + offset
         )
-        path.lineTo((centerX - (size / 2)).toFloat(), (centerY - radius + size + offset).toFloat())
+        path.lineTo(centerX - (size / 2), centerY - radius + size + offset)
         path.close()
         canvas.withRotation(degree, centerX, centerY) {
             this.drawPath(path, paint)
@@ -281,15 +285,18 @@ class CrossRocker : View {
         repeat(PARTITION) { i ->
             canvas.drawLine(
                 centerX, centerY,
-                vectorX[i].toFloat() + centerX,
-                (-vectorY[i]).toFloat() + centerY,
+                vectorX[i] + centerX,
+                (-vectorY[i]) + centerY,
                 paint
             )
         }
     }
 
-    fun setActionListener(onAction: (v: View, direction: String, action: Int) -> Unit) {
+    /**
+     * 十字键的监听
+     * @param direction 响应的方向
+     */
+    fun setActionListener(onAction: (v: View, direction: String, action: MotionEvent) -> Unit) {
         this.onAction = onAction
     }
-
 }

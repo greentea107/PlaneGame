@@ -251,8 +251,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
      * 初始化游戏十字键
      */
     private fun initGamePad() {
-        gamePad.setActionListener { _, direction, action ->
-            onGamePadKey(action, direction) // 响应方向盘操作
+        gamePad.setActionListener { _, direction, evt ->
+            onGamePadKey(evt.actionMasked, direction) // 响应方向盘操作
         }
     }
 
